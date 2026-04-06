@@ -1,0 +1,10 @@
+services:
+  sorobuild-server:
+    image: sorobuild-server
+    env_file:
+      - .env
+    ports:
+      - "3050:3050"
+    environment:
+      ENV: PRODUCTION
+    restart: always
