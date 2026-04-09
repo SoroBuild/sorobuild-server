@@ -9,14 +9,10 @@ const multer = require("multer");
 const upload = multer(); // Create a multer instance for handling form-data'
 const { processArgs, checkTrustline } = require("./utils");
 const RPC_URLS = require("./urls");
-const {
-  RpcServer,
-  HorizonServer,
-  serverUrl,
-} = require("./config/sorobuild-config");
-const e = require("express");
+const { RpcServer, serverUrl } = require("./config/sorobuild-config");
+const { createOrUpdateUserByWallet } = require("./services/stats.service");
+const statsRoutes = require("./routes/stats.routes");
 
-const SECRET = "SB2XF67BMFBS2MNHIIJWCNLAYILBLFO3X3QVCBL63D54KB6EWYRG6L4J";
 const BASE_FEE = "1000000";
 
 const {
@@ -451,7 +447,14 @@ app.post("/sendTransactionMemory", async (req, res) => {
 });
 
 app.post("/send-transaction", async (req, res) => {
-  const { signedTx, network, type = null } = req.body;
+  const {
+    signedTx,
+    network,
+    pubKey = null,
+    feature_used = "studio",
+    action = null,
+    type = null,
+  } = req.body;
 
   if (!signedTx || !network) {
     return res.status(400).json({ error: "signed transaction is required" });
@@ -477,6 +480,13 @@ app.post("/send-transaction", async (req, res) => {
     }
 
     if (sendResponse) {
+      if (pubKey) {
+        await createOrUpdateUserByWallet(pubKey, network, {
+          feature_used,
+          action,
+        });
+        console.log("stats updated");
+      }
       res.status(200).json({
         message: "transaction submited",
         data: sendResponse,
@@ -717,7 +727,14 @@ app.post("/sendBuy", async (req, res) => {
 });
 
 app.post("/any-invoke", async (req, res) => {
-  const { pubKey, network, contractId, operation, argsXdr = [] } = req.body;
+  const {
+    pubKey,
+    network,
+    contractId,
+    operation,
+    argsXdr = [],
+    feature_used = "studio",
+  } = req.body;
 
   const args = argsXdr.map((xdr64) =>
     StellarSdk.xdr.ScVal.fromXDR(xdr64, "base64")
@@ -749,9 +766,17 @@ app.post("/any-invoke", async (req, res) => {
       if (!callCheckRes?.stateChanges && callCheckRes) {
         const output = safeStringify(callCheckRes?.results[0]?.returnValueJson);
 
-        if (output !== "void") {
-          return res.status(200).json({ output: output, noStateChange: true });
+        if (pubKey) {
+          await createOrUpdateUserByWallet(pubKey, network, {
+            feature_used,
+            action: "read",
+          });
         }
+        return res.status(200).json({ output: output, noStateChange: true });
+
+        // if (output !== "void") {
+        //   return res.status(200).json({ output: output, noStateChange: true });
+        // }
       }
     } catch (e) {
       console.log(e);
@@ -833,36 +858,6 @@ app.post("/any-transaction-builder", async (req, res) => {
       data: txXdr,
     });
     await updateCredit(pubKey, -1);
-  } catch (error) {
-    console.error(
-      "Error:",
-      error.response ? error.response.data : error.message
-    );
-  }
-});
-
-app.post("/getTrustline", async (req, res) => {
-  const { accountId, assetId, network } = req.body;
-
-  if (!accountId || !assetId || !network) {
-    return res.status(400).json({ error: "request body is incomplete" });
-  }
-
-  try {
-    const server = new Horizon.Server(RPC_URLS[network].HORIZON);
-    const assetData = assetMetadata[assetId];
-    const account = await server.loadAccount(accountId);
-
-    const hasTrustline = account.balances.some(
-      (balance) =>
-        balance.asset_code === assetData?.assetCode &&
-        balance.asset_issuer === assetData?.assetIssuer
-    );
-
-    res.status(200).json({
-      message: "has trustline read",
-      data: hasTrustline,
-    });
   } catch (error) {
     console.error(
       "Error:",
@@ -1264,7 +1259,8 @@ app.post("/invoke-quest", async (req, res) => {
   }
 });
 
-// Start the Express server
+app.use("/api/stats", statsRoutes);
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

@@ -10,7 +10,7 @@ const RPC_URLS = {
 
   TESTNET: {
     // SOROBAN: `https://base-testnet-rpc.soro.build`,
-    SOROBAN: `https://rpc.ankr.com/stellar_testnet_soroban/${process.env.RPC_URL_KEY}`,
+    SOROBAN: `https://rpc-testnet.stellar.org`,
     HORIZON: "https://horizon-testnet.stellar.org",
     networkPassphrase: "Test SDF Network ; September 2015",
   },
