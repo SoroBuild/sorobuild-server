@@ -62,6 +62,9 @@ const findUserCredit = async (address) => {
     return creditRecord;
   } catch (error) {
     console.error("Error in findOrCreateCredit:", error);
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 };
 
@@ -83,6 +86,9 @@ const updateCredit = async (address, creditChange) => {
     return updatedRecord;
   } catch (error) {
     console.error("Error updating credit:", error);
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 };
 
@@ -194,6 +200,9 @@ app.post("/getUserCredit", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -218,6 +227,9 @@ app.post("/getAccount", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -360,6 +372,9 @@ app.post("/prepareTransaction", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -493,6 +508,9 @@ app.post("/txBuilder", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -595,6 +613,9 @@ app.post("/create-contract", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -641,6 +662,9 @@ app.post("/buyCredit", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -691,6 +715,9 @@ app.post("/sendBuy", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -746,8 +773,11 @@ app.post("/any-invoke", async (req, res) => {
         //   return res.status(200).json({ output: output, noStateChange: true });
         // }
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(400)
+        .json({ error: error.response ? error.response.data : error.message });
     }
 
     const server = RpcServer(network, "json");
@@ -777,6 +807,9 @@ app.post("/any-invoke", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -831,6 +864,9 @@ app.post("/any-transaction-builder", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -1026,6 +1062,9 @@ app.post("/getTransaction", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -1085,6 +1124,9 @@ app.post("/check-is-winner", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -1144,6 +1186,9 @@ app.post("/check-selection-open", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
@@ -1224,6 +1269,9 @@ app.post("/invoke-quest", async (req, res) => {
       "Error:",
       error.response ? error.response.data : error.message
     );
+    return res
+      .status(400)
+      .json({ error: error.response ? error.response.data : error.message });
   }
 });
 
