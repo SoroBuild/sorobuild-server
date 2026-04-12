@@ -235,6 +235,7 @@ app.post("/getAccount", async (req, res) => {
 
 app.post("/loadContractSpecs", async (req, res) => {
   const { network, contractId } = req.body;
+  console.log("the body are", req.body);
 
   if (!contractId || !network) {
     return res
@@ -1120,6 +1121,7 @@ app.post("/check-is-winner", async (req, res) => {
       data: result,
     });
   } catch (error) {
+    console.log;
     console.error(
       "Error:",
       error.response ? error.response.data : error.message
