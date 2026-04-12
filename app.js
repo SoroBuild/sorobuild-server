@@ -23,28 +23,13 @@ const {
   Operation,
   Horizon,
   Asset,
-  TimeoutInfinite,
-  hash,
-  rpc,
   Networks,
-  Transaction,
 } = StellarSdk;
 
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-const assetMetadata = {
-  CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75: {
-    assetCode: "USDC",
-    assetIssuer: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-  },
-  CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA: {
-    assetCode: "USDC",
-    assetIssuer: "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-  },
-};
 
 mongoose
   .connect(keys.MONGODB_URI)
@@ -128,24 +113,6 @@ function safeStringify(obj) {
     )
   );
 }
-
-const simulateTx_with_check = async (tx, server) => {
-  const response = await server.simulateTransaction(tx);
-
-  if (
-    StellarSdk.rpc.Api.isSimulationSuccess(response) &&
-    response.result !== undefined
-  ) {
-    // return scValToNative(response.result.retval);
-
-    return {
-      stateChange: response?.stateChanges?.length > 0,
-      output: scValToNative(response.result.retval),
-    };
-  }
-
-  throw new Error("cannot simulate transaction");
-};
 
 async function contractGet(pubKey, contractId, operation, args, fee, network) {
   const server = RpcServer(network, "json");
