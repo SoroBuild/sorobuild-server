@@ -138,6 +138,7 @@ async function contractGet(pubKey, contractId, operation, args, fee, network) {
 const allowedOrigins = [
   "https://sorobuild.io",
   "https://soro.build",
+  "https://www.soro.build",
   "https://studio.soro.build",
   "https://ide.soro.build",
   "https://www.sorobuild.io",
