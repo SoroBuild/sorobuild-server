@@ -750,6 +750,15 @@ app.post("/any-invoke", async (req, res) => {
 
   try {
     try {
+      console.log(
+        "what is is",
+        pubKey,
+        contractId,
+        operation,
+        args,
+        BASE_FEE,
+        network
+      );
       const callCheckRes = await contractGet(
         pubKey,
         contractId,
@@ -760,6 +769,7 @@ app.post("/any-invoke", async (req, res) => {
       );
 
       if (!callCheckRes?.stateChanges && callCheckRes) {
+        console.log("the call res", callCheckRes);
         const output = safeStringify(callCheckRes?.results[0]?.returnValueJson);
 
         if (pubKey) {
